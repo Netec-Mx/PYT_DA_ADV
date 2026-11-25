@@ -3379,6 +3379,9 @@ También generó un conjunto validado para análisis en formato Parquet, con tra
 Recursos oficiales consultables:
 
 - Pandas 3.0.0: <https://pandas.pydata.org/docs/whatsnew/v3.0.0.html>
+
 - NumPy 2.2.0: <https://numpy.org/doc/2.2/release/2.2.0-notes.html>
+
 - PyArrow 18.1.0: <https://arrow.apache.org/docs/18.1/>
+
 - Python 3.12.1: <https://www.python.org/downloads/release/python-3121/>
