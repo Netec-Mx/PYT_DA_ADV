@@ -2,564 +2,465 @@
 
 ## Metadatos
 
-| Elemento | Valor |
+| **Elemento** | **Valor** |
 |---|---|
 | Duración | 90 minutos |
 | Complejidad | Media |
 | Nivel de Bloom | Aplicar |
 
-## Descripción General
+---
 
-En esta práctica preparará un entorno virtual reproducible y desarrollará un script Python modular para procesar registros sintéticos de ventas. El script aplicará funciones, colecciones, validaciones, excepciones específicas y persistencia en SQLite mediante consultas parametrizadas. También practicará operaciones CRUD, consultas con `JOIN`, agregación, CTE y una función de ventana, dejando una estructura reutilizable para el laboratorio 02-00-02.
+## Descripción general
 
-## Objetivos de Aprendizaje
+En esta práctica preparará un entorno de trabajo aislado con Python y desarrollará una pequeña aplicación para procesar registros sintéticos de ventas.
 
-- [ ] Crear y activar un entorno virtual aislado con Python 3.12.1 y dependencias fijadas.
-- [ ] Diseñar un script mantenible con funciones documentadas, clases básicas, colecciones y manejo específico de excepciones.
-- [ ] Validar registros JSON sintéticos y registrar entradas rechazadas sin detener toda la ejecución.
-- [ ] Crear una base SQLite local y ejecutar operaciones CRUD con parámetros en lugar de concatenación SQL.
-- [ ] Consultar datos con `INNER JOIN`, `LEFT JOIN`, `GROUP BY`, `HAVING`, `ORDER BY`, `LIMIT`, CTE y una función de ventana.
+A lo largo de la actividad utilizará estructuras de control, listas, tuplas, conjuntos y diccionarios; organizará la lógica mediante funciones y módulos; instalará una dependencia externa con `pip`; y aplicará manejo de excepciones para evitar que un registro incorrecto detenga todo el procesamiento.
+
+El propósito es construir un programa sencillo, organizado y reproducible que permita aplicar las principales habilidades de programación estudiadas en esta sección.
+
+> **Importante:** esta práctica se concentra en fundamentos de programación, organización del código, dependencias y manejo de errores. No se utilizarán bases de datos ni programación orientada a objetos, ya que estos contenidos se abordarán posteriormente en el módulo.
+
+---
+
+## Objetivos de aprendizaje
+
+Al finalizar la práctica, podrá:
+
+- [ ] Crear y activar un entorno virtual de Python.
+- [ ] Instalar una dependencia externa mediante `pip`.
+- [ ] Registrar las dependencias necesarias en `requirements.txt`.
+- [ ] Utilizar listas, tuplas, conjuntos y diccionarios de acuerdo con su propósito.
+- [ ] Aplicar condicionales y ciclos para procesar registros.
+- [ ] Crear funciones con parámetros y valores de retorno.
+- [ ] Separar funcionalidades en módulos e importarlas desde un script principal.
+- [ ] Utilizar comprensiones para construir colecciones de forma concisa.
+- [ ] Manejar errores específicos mediante `try` y `except`.
+- [ ] Aplicar convenciones básicas de PEP 8 y PEP 257.
+
+---
 
 ## Prerrequisitos
 
-**Conocimientos requeridos**
+### Conocimientos requeridos
 
-- Python intermedio: funciones, parámetros, `return`, condicionales, ciclos, listas, tuplas, conjuntos, diccionarios, clases y excepciones.
-- Uso básico de `pip`, `venv` y Visual Studio Code.
-- SQL básico: `SELECT`, `WHERE`, `INSERT`, `UPDATE`, `DELETE`, `JOIN`, `GROUP BY`, `HAVING`, `ORDER BY` y `LIMIT`.
-- Conocimiento de tipos SQLite y consultas parametrizadas.
-- Se recomienda haber realizado el laboratorio 01-00-03 y conservar su estructura de proyecto.
+- Fundamentos de Python.
+- Tipos de datos básicos.
+- Uso básico de variables y operadores.
+- Conceptos básicos de listas, diccionarios y estructuras de control.
+- Uso básico de Visual Studio Code.
+- Manejo básico de una terminal.
 
-**Acceso requerido**
+### Software requerido
 
-- Permisos para crear archivos dentro del directorio raíz de su proyecto.
-- Acceso a Internet únicamente para instalar dependencias desde fuentes autorizadas.
-- No use datos reales, PII, credenciales, tokens ni información de clientes.
-- No se requieren contenedores, puertos HTTP, cuentas de base de datos ni servicios externos.
+- Python 3.12.1.
+- Visual Studio Code.
+- Extensión de Python para Visual Studio Code.
+- PowerShell.
+- Acceso a Internet para instalar la dependencia requerida.
 
-## Entorno de Laboratorio
+---
 
-Mantenga la estructura creada en laboratorios anteriores. No modifique los artefactos previos de `salidas/lab-01-00-02`, `salidas/lab-01-00-03`, `evidencia/lab-01-00-02` ni `evidencia/lab-01-00-03`.
+## Resultado esperado
 
-| Recurso | Versión, edición y arquitectura | Uso en esta práctica | Fuente oficial |
-|---|---|---|---|
-| Python | Python 3.12.1, 64 bits | Intérprete del entorno virtual | <https://www.python.org/downloads/release/python-3121/> |
-| pip | pip 24.3.1 | Instalación y registro de dependencias | <https://pypi.org/project/pip/24.3.1/> |
-| SQLite | SQLite 3.47.2, biblioteca local de 64 bits | Base de datos local mediante `sqlite3` | <https://www.sqlite.org/releaselog/3_47_2.html> |
-| SQLAlchemy | SQLAlchemy 2.0.36, paquete Python multiplataforma | Dependencia fijada para continuidad del lote | <https://pypi.org/project/SQLAlchemy/2.0.36/> |
-| Visual Studio Code | Visual Studio Code 1.96.2, 64 bits | Edición y ejecución del script | <https://code.visualstudio.com/updates/v1_96> |
-| Pandas | Pandas 3.0.0, paquete Python multiplataforma | Compatible con el entorno del curso; no se requiere en el script | <https://pypi.org/project/pandas/3.0.0/> |
-| NumPy | NumPy 2.2.0, paquete Python multiplataforma | Compatible con el entorno del curso; no se requiere en el script | <https://pypi.org/project/numpy/2.2.0/> |
-| Matplotlib | Matplotlib 3.10.0, paquete Python multiplataforma | Compatible con el entorno del curso | <https://pypi.org/project/matplotlib/3.10.0/> |
-| Seaborn | Seaborn 0.13.2, paquete Python multiplataforma | Compatible con el entorno del curso | <https://pypi.org/project/seaborn/0.13.2/> |
-| scikit-learn | scikit-learn 1.6.0, paquete Python multiplataforma | Compatible con el entorno del curso | <https://pypi.org/project/scikit-learn/1.6.0/> |
-| Plotly | Plotly 5.24.1, paquete Python multiplataforma | Compatible con el entorno del curso | <https://pypi.org/project/plotly/5.24.1/> |
-| PyArrow | PyArrow 18.1.0, paquete Python multiplataforma | Compatible con el entorno del curso | <https://pypi.org/project/pyarrow/18.1.0/> |
-| JupyterLab | JupyterLab 4.3.4, paquete Python multiplataforma | Compatible con el entorno del curso; opcional | <https://pypi.org/project/jupyterlab/4.3.4/> |
+Al finalizar la práctica contará con un proyecto de Python ejecutado desde Visual Studio Code y aislado mediante un entorno virtual.
 
-> **Nota sobre herramientas de IA y licencias:** esta práctica no requiere Microsoft 365 Copilot, Copilot Chat, GitHub Copilot, Microsoft Designer ni Microsoft Planner. Si su institución habilita alguna de estas herramientas, su uso debe seguir la licencia institucional aplicable y no debe incluir datos sensibles. Copilot Chat es una función de asistencia conversacional; Microsoft 365 Copilot es un producto integrado con Microsoft 365; Designer se orienta a diseño visual; Planner se orienta a planificación de tareas. No son herramientas equivalentes ni necesarias para completar esta práctica.
+El programa procesará registros sintéticos de ventas mediante funciones y diferentes estructuras de datos, identificará registros válidos y rechazados, calculará un resumen básico y mostrará los resultados en formato tabular.
 
-**Estructura esperada al finalizar**
+Además, el programa continuará ejecutándose aunque encuentre registros incorrectos, registrando el motivo de cada rechazo mediante manejo controlado de excepciones.
+
+La estructura final será similar a la siguiente:
 
 ```text
 proyecto/
 ├── .venv/
 ├── datos/
-│   ├── lab-02-00-01_ventas.json
-│   └── lab-02-00-01.sqlite
-├── evidencia/
-│   └── lab-02-00-01/
-│       ├── dependencias_instaladas.txt
-│       └── salida_ejecucion.txt
+│   └── ventas.json
 ├── salidas/
-│   └── lab-02-00-01/
-│       └── registros_rechazados.json
+│   └── registros_rechazados.json
 ├── scripts/
-│   ├── configuracion.py
+│   ├── utilidades.py
 │   └── ventas_app.py
 └── requirements.txt
 ```
 
-## Instrucciones Paso a Paso
+---
 
-### Paso 1: Ubicar el directorio raíz del proyecto
+# Instrucciones paso a paso
 
-**Objetivo:** Trabajar desde el directorio raíz utilizado en los laboratorios anteriores.
+## Paso 1. Crear la carpeta del proyecto y abrir Visual Studio Code
 
-**Instrucciones:**
+**Objetivo:** preparar el directorio de trabajo desde PowerShell y continuar el resto de la práctica dentro de Visual Studio Code.
 
-1. Abra una terminal en Visual Studio Code o en su sistema operativo.
-2. Navegue al directorio raíz de su proyecto.
-3. Confirme que existen las carpetas creadas en los laboratorios previos.
+### Instrucciones
 
-En Windows PowerShell:
+1. Abra **PowerShell**.
+
+2. Navegue hasta la ubicación donde almacenará las prácticas del curso.
+
+3. Cree la carpeta correspondiente a esta práctica:
 
 ```powershell
-Get-Location
-Get-ChildItem
+New-Item -ItemType Directory -Path practica_2_1
 ```
 
-En macOS o Linux:
+4. Ingrese a la carpeta:
 
-```bash
-pwd
-ls -la
+```powershell
+Set-Location practica_2_1
 ```
 
-**Salida esperada:** Se muestra la ruta del proyecto y, si realizó los laboratorios anteriores, carpetas como `datos`, `salidas`, `evidencia` y `scripts`.
+5. Abra la carpeta actual en Visual Studio Code:
 
-**Verificación:** Registre la ruta del proyecto en sus notas de evidencia. No cambie rutas preexistentes.
+```powershell
+code .
+```
+
+### Resultado esperado
+
+Visual Studio Code se abre utilizando `practica_2_1` como carpeta raíz del proyecto.
+
+> A partir de este punto, no será necesario continuar trabajando en la ventana externa de PowerShell. Las siguientes instrucciones se realizarán desde Visual Studio Code y su terminal integrada.
 
 ---
 
-### Paso 2: Crear o activar el entorno virtual
+## Paso 2. Crear y activar el entorno virtual
 
-**Objetivo:** Garantizar que todas las dependencias se instalen en un entorno aislado del proyecto.
+**Objetivo:** aislar las dependencias de esta práctica para evitar que interfieran con otros proyectos de Python.
 
-**Instrucciones:**
+### Instrucciones
 
-1. Compruebe si existe la carpeta `.venv`.
-2. Si no existe, créela con Python 3.12.1.
-3. Active el entorno virtual.
+1. En Visual Studio Code, abra una terminal desde:
 
-En Windows PowerShell:
+**Terminal > New Terminal**
+
+2. Compruebe la versión de Python:
 
 ```powershell
-if (-not (Test-Path ".venv")) { py -3.12 -m venv .venv }
+python --version
+```
+
+La versión esperada para el curso es:
+
+```text
+Python 3.12.1
+```
+
+3. Cree el entorno virtual:
+
+```powershell
+python -m venv .venv
+```
+
+4. Active el entorno:
+
+```powershell
 .\.venv\Scripts\Activate.ps1
 ```
 
-En macOS o Linux:
+### Resultado esperado
 
-```bash
-if [ ! -d ".venv" ]; then python3.12 -m venv .venv; fi
-source .venv/bin/activate
+La terminal deberá mostrar `(.venv)` al inicio de la línea, por ejemplo:
+
+```text
+(.venv) PS C:\...\practica_2_1>
 ```
 
-**Salida esperada:** El indicador de la terminal muestra normalmente `(.venv)` al inicio.
+### Verificación
 
-**Verificación:** Ejecute el siguiente bloque y confirme que la ruta incluye `.venv`.
-
-```bash
-python -c "import sys; print(sys.executable); print(sys.version)"
-```
-
----
-
-### Paso 3: Verificar Python, pip y SQLite
-
-**Objetivo:** Confirmar las versiones del intérprete, instalador y biblioteca SQLite disponibles en el entorno.
-
-**Instrucciones:**
-
-1. Ejecute la comprobación desde el entorno virtual activo.
-2. Compare Python con la versión requerida.
-3. Registre la versión SQLite disponible en el intérprete.
-
-```bash
-python --version
-python -m pip --version
-python -c "import sqlite3; print('SQLite:', sqlite3.sqlite_version)"
-```
-
-**Salida esperada:** Python informa `Python 3.12.1`; `pip` informa `24.3.1`; SQLite informa la versión disponible en su instalación local.
-
-**Verificación:** La ruta mostrada por `python -m pip --version` debe apuntar a `.venv`. Si SQLite no informa `3.47.2`, continúe únicamente si su instructor autorizó la biblioteca incluida con Python y deje constancia de la versión real en la evidencia.
-
----
-
-### Paso 4: Crear el archivo de dependencias fijadas
-
-**Objetivo:** Registrar de manera reproducible la dependencia externa utilizada en el lote.
-
-**Instrucciones:**
-
-1. Cree `requirements.txt` en la raíz del proyecto.
-2. Fije SQLAlchemy en la versión requerida.
-3. No instale paquetes globalmente.
-
-En Windows PowerShell:
+Ejecute:
 
 ```powershell
-@"
-## Entorno validado con Python 3.12.1 y pip 24.3.1
-SQLAlchemy==2.0.36
-"@ | Set-Content -Encoding utf8 requirements.txt
+python -c "import sys; print(sys.executable)"
 ```
 
-En macOS o Linux:
+La ruta mostrada deberá contener:
 
-```bash
-cat > requirements.txt <<'EOF'
-## Entorno validado con Python 3.12.1 y pip 24.3.1
-SQLAlchemy==2.0.36
-EOF
+```text
+.venv
 ```
 
-**Salida esperada:** Existe el archivo `requirements.txt` con una dependencia fijada mediante `==`.
-
-**Verificación:**
-
-```bash
-cat requirements.txt
-```
-
-En Windows PowerShell también puede usar:
-
-```powershell
-Get-Content requirements.txt
-```
+Esto confirma que Python se está ejecutando desde el entorno virtual del proyecto.
 
 ---
 
-### Paso 5: Instalar y registrar dependencias
+## Paso 3. Seleccionar el intérprete de Python en Visual Studio Code
 
-**Objetivo:** Instalar la dependencia declarada dentro del entorno virtual y generar evidencia reproducible.
+**Objetivo:** asegurar que tanto Visual Studio Code como la terminal utilicen el mismo entorno virtual.
 
-**Instrucciones:**
+### Instrucciones
 
-1. Actualice `pip` exactamente a la versión indicada.
-2. Instale las dependencias desde `requirements.txt`.
-3. Cree la carpeta de evidencia de este laboratorio.
-4. Registre las dependencias instaladas.
+1. Presione:
 
-```bash
-python -m pip install --upgrade pip==24.3.1
+```text
+Ctrl + Shift + P
+```
+
+2. Busque:
+
+```text
+Python: Select Interpreter
+```
+
+3. Seleccione el intérprete correspondiente a:
+
+```text
+.venv
+```
+
+Normalmente aparecerá con una ruta similar a:
+
+```text
+.venv\Scripts\python.exe
+```
+
+### Resultado esperado
+
+Visual Studio Code utilizará el entorno virtual creado para esta práctica.
+
+---
+
+## Paso 4. Crear la estructura de carpetas
+
+**Objetivo:** organizar los archivos del proyecto de acuerdo con su función.
+
+### Instrucciones
+
+Desde el **Explorador de Visual Studio Code**, cree las siguientes carpetas:
+
+```text
+datos
+scripts
+salidas
+```
+
+La estructura deberá verse así:
+
+```text
+practica_2_1/
+├── .venv/
+├── datos/
+├── salidas/
+└── scripts/
+```
+
+### ¿Por qué separar los archivos?
+
+- `datos/`: contiene los archivos que utiliza el programa como entrada.
+- `scripts/`: contiene el código Python.
+- `salidas/`: almacena archivos generados durante la ejecución.
+
+Esta separación facilita localizar los componentes del proyecto y evita mezclar código, entradas y resultados.
+
+---
+
+## Paso 5. Crear el archivo de dependencias
+
+**Objetivo:** declarar explícitamente una dependencia externa para que el entorno pueda reproducirse posteriormente.
+
+### Instrucciones
+
+1. Desde el Explorador de Visual Studio Code, cree en la raíz del proyecto el archivo:
+
+```text
+requirements.txt
+```
+
+2. Agregue:
+
+```text
+tabulate==0.9.0
+```
+
+3. Guarde el archivo.
+
+### ¿Qué significa `==0.9.0`?
+
+Indica que el proyecto utilizará específicamente la versión `0.9.0` del paquete.
+
+Esto permite que otra persona pueda instalar la misma versión y trabajar con un entorno equivalente.
+
+---
+
+## Paso 6. Instalar la dependencia
+
+**Objetivo:** utilizar `pip` para instalar dentro del entorno virtual las dependencias declaradas por el proyecto.
+
+### Instrucciones
+
+En la terminal integrada de Visual Studio Code, compruebe primero que aparece `(.venv)`.
+
+Después ejecute:
+
+```powershell
 python -m pip install -r requirements.txt
 ```
 
-En Windows PowerShell:
+### Verificación
+
+Ejecute:
 
 ```powershell
-New-Item -ItemType Directory -Force evidencia/lab-02-00-01 | Out-Null
-python -m pip freeze | Set-Content -Encoding utf8 evidencia/lab-02-00-01/dependencias_instaladas.txt
+python -m pip show tabulate
 ```
 
-En macOS o Linux:
-
-```bash
-mkdir -p evidencia/lab-02-00-01
-python -m pip freeze > evidencia/lab-02-00-01/dependencias_instaladas.txt
-```
-
-**Salida esperada:** `pip` instala o confirma `SQLAlchemy==2.0.36`.
-
-**Verificación:**
-
-```bash
-python -c "import sqlalchemy; print(sqlalchemy.__version__)"
-```
-
-La salida debe ser:
+Deberá aparecer información similar a:
 
 ```text
-2.0.36
+Name: tabulate
+Version: 0.9.0
 ```
+
+### ¿Por qué usamos `python -m pip`?
+
+Esta forma permite ejecutar `pip` utilizando explícitamente el mismo intérprete de Python que está activo.
+
+Así reducimos el riesgo de instalar el paquete accidentalmente en otra instalación de Python.
 
 ---
 
-### Paso 6: Crear las carpetas exclusivas del laboratorio
+## Paso 7. Crear los datos de entrada
 
-**Objetivo:** Separar entradas, salidas y evidencia sin sobrescribir los laboratorios anteriores.
+**Objetivo:** disponer de registros sintéticos que permitan practicar estructuras de datos, funciones y manejo de errores.
 
-**Instrucciones:**
+### Instrucciones
 
-1. Cree la carpeta de salida del laboratorio.
-2. Compruebe que `datos` y `scripts` existen; créelas solo si faltan.
-3. No elimine contenido anterior.
+1. Dentro de la carpeta `datos`, cree:
 
-En Windows PowerShell:
-
-```powershell
-New-Item -ItemType Directory -Force datos, scripts, salidas/lab-02-00-01 | Out-Null
+```text
+ventas.json
 ```
 
-En macOS o Linux:
-
-```bash
-mkdir -p datos scripts salidas/lab-02-00-01
-```
-
-**Salida esperada:** Existen `datos`, `scripts`, `salidas/lab-02-00-01` y `evidencia/lab-02-00-01`.
-
-**Verificación:** Liste las carpetas creadas y confirme que las de laboratorios previos siguen presentes.
-
----
-
-### Paso 7: Crear una entrada sintética controlada
-
-**Objetivo:** Disponer de una entrada reproducible, sin datos personales, que contenga registros válidos y un registro inválido.
-
-**Instrucciones:**
-
-1. Cree el archivo `datos/lab-02-00-01_ventas.json`.
-2. Copie exactamente el contenido siguiente.
-3. Observe que el último registro contiene un identificador no convertible a entero; debe terminar en el archivo de rechazados.
+2. Agregue:
 
 ```json
 [
-  {
-    "id": 101,
-    "region": "Norte",
-    "fecha": "2026-10-01",
-    "importe": 1250.50,
-    "estado": "PENDIENTE"
-  },
-  {
-    "id": 102,
-    "region": "Sur",
-    "fecha": "2026-10-02",
-    "importe": 480.00,
-    "estado": "REVISADA"
-  },
-  {
-    "id": 103,
-    "region": "Norte",
-    "fecha": "2026-10-03",
-    "importe": null,
-    "estado": "REVISADA"
-  },
-  {
-    "id": 104,
-    "region": "Este",
-    "fecha": "2026-10-04",
-    "importe": 2100.00,
-    "estado": "ANULADA"
-  },
-  {
-    "id": "X-105",
-    "region": "Oeste",
-    "fecha": "2026-10-05",
-    "importe": 760.00,
-    "estado": "PENDIENTE"
-  }
+    {
+        "id": 101,
+        "region": "Norte",
+        "importe": 1250.50,
+        "estado": "completada"
+    },
+    {
+        "id": 102,
+        "region": "Sur",
+        "importe": 480.00,
+        "estado": "completada"
+    },
+    {
+        "id": 103,
+        "region": "Norte",
+        "importe": 2100.00,
+        "estado": "pendiente"
+    },
+    {
+        "id": 104,
+        "region": "Centro",
+        "importe": 760.00,
+        "estado": "completada"
+    },
+    {
+        "id": "X-105",
+        "region": "Sur",
+        "importe": 950.00,
+        "estado": "completada"
+    },
+    {
+        "id": 106,
+        "region": "Oeste",
+        "importe": -120.00,
+        "estado": "completada"
+    }
 ]
 ```
 
-**Salida esperada:** El archivo JSON contiene cinco registros, de los cuales cuatro son válidos.
+### Resultado esperado
 
-**Verificación:**
+El archivo contiene seis registros.
 
-```bash
-python -m json.tool datos/lab-02-00-01_ventas.json > /dev/null
-```
+Sin embargo, no todos son válidos:
 
-En Windows PowerShell, si `/dev/null` no existe:
+- `"X-105"` no puede convertirse directamente en un identificador entero.
+- El registro `106` contiene un importe negativo.
 
-```powershell
-python -m json.tool datos/lab-02-00-01_ventas.json | Out-Null
-```
+Estos registros permitirán comprobar posteriormente el manejo de errores.
 
 ---
 
-### Paso 8: Crear el módulo de configuración
+## Paso 8. Crear un módulo de utilidades
 
-**Objetivo:** Centralizar rutas, configuraciones inmutables y valores permitidos.
+**Objetivo:** separar funciones reutilizables del flujo principal del programa.
 
-**Instrucciones:**
+### Instrucciones
 
-1. Cree `scripts/configuracion.py`.
-2. Use una tupla para los campos obligatorios, porque su estructura no debe cambiar durante la ejecución.
-3. Use un conjunto para los estados permitidos, porque no admite duplicados y permite búsquedas eficientes.
+Dentro de `scripts`, cree:
 
-```python
-"""Configuración reutilizable para el procesamiento de ventas."""
-
-from pathlib import Path
-
-RAIZ_PROYECTO = Path(__file__).resolve().parent.parent
-RUTA_ENTRADA = RAIZ_PROYECTO / "datos" / "lab-02-00-01_ventas.json"
-RUTA_BASE_DATOS = RAIZ_PROYECTO / "datos" / "lab-02-00-01.sqlite"
-RUTA_RECHAZADOS = (
-    RAIZ_PROYECTO / "salidas" / "lab-02-00-01" / "registros_rechazados.json"
-)
-
-CAMPOS_OBLIGATORIOS = ("id", "region", "fecha", "importe", "estado")
-ESTADOS_PERMITIDOS = {"PENDIENTE", "REVISADA", "ANULADA"}
-UMBRAL_VENTA_ALTA = 1000.0
+```text
+utilidades.py
 ```
 
-**Salida esperada:** El módulo contiene constantes con nombres en mayúsculas y guiones bajos.
-
-**Verificación:** Revise que todas las rutas se construyen con `Path` y no con cadenas concatenadas.
-
----
-
-### Paso 9: Crear el script principal modular
-
-**Objetivo:** Implementar validación, clases, manejo de errores, operaciones CRUD y consultas SQL parametrizadas.
-
-**Instrucciones:**
-
-1. Cree el archivo `scripts/ventas_app.py`.
-2. Copie el código completo.
-3. No cambie los marcadores `?` por valores concatenados en las sentencias SQL.
-4. Identifique en el código el uso de lista, tupla, conjunto, diccionario, composición, herencia y polimorfismo.
+Agregue el siguiente código:
 
 ```python
-"""Procesa ventas sintéticas y las persiste de forma segura en SQLite."""
+"""Funciones auxiliares para procesar registros de ventas."""
 
-import argparse
 import json
-import sqlite3
-from datetime import date
 from pathlib import Path
 
-from configuracion import (
-    CAMPOS_OBLIGATORIOS,
-    ESTADOS_PERMITIDOS,
-    RUTA_BASE_DATOS,
-    RUTA_ENTRADA,
-    RUTA_RECHAZADOS,
-    UMBRAL_VENTA_ALTA,
-)
+
+CAMPOS_OBLIGATORIOS = ("id", "region", "importe", "estado")
+ESTADOS_PERMITIDOS = {"completada", "pendiente", "cancelada"}
 
 
-class RegistroBase:
-    """Representa un registro identificable dentro del proceso."""
-
-    def __init__(self, identificador: int) -> None:
-        self.identificador = identificador
-
-    def __eq__(self, otro: object) -> bool:
-        """Compara registros por identificador lógico."""
-        if not isinstance(otro, RegistroBase):
-            return NotImplemented
-        return self.identificador == otro.identificador
-
-
-class Venta(RegistroBase):
-    """Representa una venta validada y reutilizable por otros módulos."""
-
-    def __init__(
-        self,
-        identificador: int,
-        region: str,
-        fecha: str,
-        importe: float | None,
-        estado: str,
-    ) -> None:
-        super().__init__(identificador)
-        self.region = region
-        self.fecha = fecha
-        self.importe = importe
-        self.estado = estado
-
-    def clasificar_importe(self) -> str:
-        """Clasifica el importe según el umbral configurado."""
-        if self.importe is None:
-            return "sin dato"
-        if self.importe >= UMBRAL_VENTA_ALTA:
-            return "alta"
-        return "estandar"
-
-    def a_fila(self, region_id: int) -> tuple:
-        """Sobrescribe la representación persistible del registro."""
-        return (
-            self.identificador,
-            region_id,
-            self.fecha,
-            self.importe,
-            self.estado,
-            self.clasificar_importe(),
-        )
-
-
-class ResumenEjecucion:
-    """Agrupa resultados mediante composición y protege sus mensajes."""
-
-    def __init__(self, ventas: list[Venta]) -> None:
-        self.ventas = ventas
-        self._mensajes: list[str] = []
-
-    def agregar_mensaje(self, mensaje: str) -> None:
-        """Agrega un mensaje controlado al resumen."""
-        self._mensajes.append(mensaje)
-
-    @property
-    def mensajes(self) -> tuple[str, ...]:
-        """Devuelve mensajes como tupla inmutable para lectura."""
-        return tuple(self._mensajes)
-
-
-def cargar_json(ruta_entrada: Path) -> list[dict]:
-    """Carga una lista JSON desde una ruta existente.
-
-    Raises:
-        FileNotFoundError: Si el archivo de entrada no existe.
-        ValueError: Si el contenido JSON no representa una lista.
-        json.JSONDecodeError: Si el contenido no tiene sintaxis JSON válida.
-    """
-    if not ruta_entrada.exists():
-        raise FileNotFoundError(f"No existe el archivo de entrada: {ruta_entrada}")
-
-    with ruta_entrada.open(encoding="utf-8") as archivo:
+def cargar_ventas(ruta: Path) -> list[dict]:
+    """Carga los registros almacenados en un archivo JSON."""
+    with ruta.open(encoding="utf-8") as archivo:
         datos = json.load(archivo)
 
     if not isinstance(datos, list):
-        raise ValueError("La entrada JSON debe contener una lista de registros.")
+        raise ValueError("El archivo debe contener una lista de registros.")
 
     return datos
 
 
-def validar_registro(registro: dict) -> Venta:
-    """Convierte un diccionario válido en una instancia de Venta.
-
-    Raises:
-        KeyError: Si falta un campo obligatorio.
-        ValueError: Si un valor no cumple las reglas establecidas.
-        TypeError: Si el registro no es un diccionario.
-    """
+def validar_venta(registro: dict) -> dict:
+    """Valida y normaliza un registro individual de venta."""
     if not isinstance(registro, dict):
-        raise TypeError("Cada registro debe ser un diccionario JSON.")
-
-    campos_recibidos = set(registro)
-    campos_esperados = set(CAMPOS_OBLIGATORIOS)
-
-    if campos_recibidos != campos_esperados:
-        faltantes = campos_esperados - campos_recibidos
-        inesperados = campos_recibidos - campos_esperados
-        raise ValueError(
-            f"Campos inválidos. Faltantes={sorted(faltantes)}, "
-            f"inesperados={sorted(inesperados)}"
-        )
+        raise TypeError("El registro debe ser un diccionario.")
 
     for campo in CAMPOS_OBLIGATORIOS:
         if campo not in registro:
             raise KeyError(f"Falta el campo obligatorio: {campo}")
 
     identificador = int(registro["id"])
-    region = str(registro["region"]).strip()
-    fecha = str(registro["fecha"])
-    importe = registro["importe"]
-    estado = str(registro["estado"]).strip().upper()
 
+    region = str(registro["region"]).strip()
     if not region:
         raise ValueError("La región no puede estar vacía.")
 
-    date.fromisoformat(fecha)
+    importe = float(registro["importe"])
+    if importe < 0:
+        raise ValueError("El importe no puede ser negativo.")
 
-    if importe is not None:
-        importe = float(importe)
-        if importe < 0:
-            raise ValueError("El importe no puede ser negativo.")
-
+    estado = str(registro["estado"]).strip().lower()
     if estado not in ESTADOS_PERMITIDOS:
         raise ValueError(f"Estado no permitido: {estado}")
 
-    return Venta(identificador, region, fecha, importe, estado)
+    return {
+        "id": identificador,
+        "region": region,
+        "importe": importe,
+        "estado": estado,
+    }
 
 
-def procesar_registros(
-    registros: list[dict],
-) -> tuple[list[Venta], list[dict]]:
-    """Valida registros y separa ventas válidas de registros rechazados."""
-    ventas_validas: list[Venta] = []
-    rechazados: list[dict] = []
+def procesar_ventas(registros: list[dict]) -> tuple[list[dict], list[dict]]:
+    """Separa los registros válidos de los registros rechazados."""
+    validos = []
+    rechazados = []
 
     for posicion, registro in enumerate(registros, start=1):
         try:
-            ventas_validas.append(validar_registro(registro))
+            venta = validar_venta(registro)
         except (KeyError, TypeError, ValueError) as error:
             rechazados.append(
                 {
@@ -568,535 +469,732 @@ def procesar_registros(
                     "motivo": str(error),
                 }
             )
+        else:
+            validos.append(venta)
 
-    return ventas_validas, rechazados
+    return validos, rechazados
 
 
-def guardar_rechazados(rechazados: list[dict], ruta_salida: Path) -> None:
-    """Guarda registros rechazados para trazabilidad del proceso."""
-    ruta_salida.parent.mkdir(parents=True, exist_ok=True)
-    ruta_salida.write_text(
-        json.dumps(rechazados, ensure_ascii=False, indent=2),
+def guardar_rechazados(rechazados: list[dict], ruta: Path) -> None:
+    """Guarda los registros rechazados en formato JSON."""
+    ruta.write_text(
+        json.dumps(rechazados, ensure_ascii=False, indent=4),
         encoding="utf-8",
     )
+```
+
+### Resultado esperado
+
+El proyecto ahora contiene un módulo independiente con funciones para:
+
+- cargar datos;
+- validar registros;
+- procesar varios registros;
+- separar registros válidos y rechazados;
+- guardar los rechazos.
+
+---
+
+## Paso 9. Identificar las estructuras de datos utilizadas
+
+**Objetivo:** reconocer por qué diferentes estructuras de Python son apropiadas para diferentes necesidades.
+
+Observe estas líneas de `utilidades.py`:
+
+```python
+CAMPOS_OBLIGATORIOS = ("id", "region", "importe", "estado")
+```
+
+Aquí se utiliza una **tupla** porque representa una colección definida de campos que no necesitamos modificar durante la ejecución.
+
+```python
+ESTADOS_PERMITIDOS = {"completada", "pendiente", "cancelada"}
+```
+
+Aquí se utiliza un **conjunto** porque interesa comprobar si un estado pertenece o no al grupo de valores permitidos.
+
+En:
+
+```python
+validos = []
+rechazados = []
+```
+
+se utilizan **listas** porque se agregarán elementos durante la ejecución.
+
+Finalmente, cada venta se representa mediante un **diccionario**:
+
+```python
+{
+    "id": identificador,
+    "region": region,
+    "importe": importe,
+    "estado": estado,
+}
+```
+
+El diccionario permite relacionar cada valor con una clave descriptiva.
+
+### Resumen
+
+| Estructura | Uso en la práctica |
+|---|---|
+| Lista | Acumular registros válidos y rechazados |
+| Tupla | Definir campos obligatorios |
+| Conjunto | Definir valores permitidos sin duplicados |
+| Diccionario | Representar cada registro mediante claves y valores |
+
+---
+
+## Paso 10. Crear el programa principal
+
+**Objetivo:** utilizar las funciones del módulo anterior para implementar el flujo completo del programa.
+
+Dentro de `scripts`, cree:
+
+```text
+ventas_app.py
+```
+
+Agregue:
+
+```python
+"""Aplicación principal para procesar registros sintéticos de ventas."""
+
+from pathlib import Path
+
+from tabulate import tabulate
+
+from utilidades import cargar_ventas, guardar_rechazados, procesar_ventas
 
 
-def crear_esquema(conexion: sqlite3.Connection) -> None:
-    """Crea las tablas SQLite si todavía no existen."""
-    conexion.executescript(
-        """
-        CREATE TABLE IF NOT EXISTS regiones (
-            region_id INTEGER PRIMARY KEY,
-            nombre TEXT NOT NULL UNIQUE
-        );
+RAIZ_PROYECTO = Path(__file__).resolve().parent.parent
+RUTA_ENTRADA = RAIZ_PROYECTO / "datos" / "ventas.json"
+RUTA_RECHAZADOS = RAIZ_PROYECTO / "salidas" / "registros_rechazados.json"
 
-        CREATE TABLE IF NOT EXISTS ventas (
-            venta_id INTEGER PRIMARY KEY,
-            region_id INTEGER NOT NULL,
-            fecha TEXT NOT NULL,
-            importe REAL,
-            estado TEXT NOT NULL,
-            categoria TEXT NOT NULL,
-            FOREIGN KEY (region_id) REFERENCES regiones(region_id)
-        );
-        """
+
+def calcular_resumen(ventas: list[dict]) -> dict:
+    """Calcula indicadores básicos de las ventas válidas."""
+    importes = [
+        venta["importe"]
+        for venta in ventas
+        if venta["estado"] == "completada"
+    ]
+
+    regiones = {venta["region"] for venta in ventas}
+
+    return {
+        "registros_validos": len(ventas),
+        "ventas_completadas": len(importes),
+        "importe_total": sum(importes),
+        "regiones": sorted(regiones),
+    }
+
+
+def mostrar_ventas(ventas: list[dict]) -> None:
+    """Muestra las ventas válidas en formato tabular."""
+    if not ventas:
+        print("No existen ventas válidas para mostrar.")
+        return
+
+    print("\n--- Ventas válidas ---")
+
+    print(
+        tabulate(
+            ventas,
+            headers="keys",
+            tablefmt="github",
+            floatfmt=".2f",
+        )
     )
 
 
-def persistir_ventas(
-    conexion: sqlite3.Connection,
-    ventas: list[Venta],
-) -> tuple[int, int]:
-    """Inserta o actualiza ventas y devuelve filas actualizadas y eliminadas."""
-    regiones_unicas = {venta.region for venta in ventas}
-    regiones_unicas.add("Sin ventas")
-
-    for region in sorted(regiones_unicas):
-        conexion.execute(
-            "INSERT OR IGNORE INTO regiones (nombre) VALUES (?)",
-            (region,),
-        )
-
-    mapa_regiones = {
-        fila["nombre"]: fila["region_id"]
-        for fila in conexion.execute(
-            "SELECT region_id, nombre FROM regiones"
-        ).fetchall()
-    }
-
-    filas_ventas = [venta.a_fila(mapa_regiones[venta.region]) for venta in ventas]
-
-    conexion.executemany(
-        """
-        INSERT INTO ventas (
-            venta_id, region_id, fecha, importe, estado, categoria
-        )
-        VALUES (?, ?, ?, ?, ?, ?)
-        ON CONFLICT(venta_id) DO UPDATE SET
-            region_id = excluded.region_id,
-            fecha = excluded.fecha,
-            importe = excluded.importe,
-            estado = excluded.estado,
-            categoria = excluded.categoria
-        """,
-        filas_ventas,
-    )
-
-    actualizadas = conexion.execute(
-        "UPDATE ventas SET estado = ? WHERE estado = ?",
-        ("REVISADA", "PENDIENTE"),
-    ).rowcount
-
-    eliminadas = conexion.execute(
-        "DELETE FROM ventas WHERE estado = ?",
-        ("ANULADA",),
-    ).rowcount
-
-    return actualizadas, eliminadas
-
-
-def ejecutar_consultas(conexion: sqlite3.Connection) -> dict[str, list[dict]]:
-    """Ejecuta consultas SELECT, JOIN, agregación, CTE y ventana."""
-    consultas = {
-        "inner_join": """
-            SELECT v.venta_id, r.nombre AS region, v.importe, v.estado
-            FROM ventas AS v
-            INNER JOIN regiones AS r ON r.region_id = v.region_id
-            WHERE v.estado = ?
-            ORDER BY v.venta_id
-        """,
-        "left_join": """
-            SELECT r.nombre AS region, COUNT(v.venta_id) AS total_ventas
-            FROM regiones AS r
-            LEFT JOIN ventas AS v ON v.region_id = r.region_id
-            GROUP BY r.nombre
-            HAVING COUNT(v.venta_id) >= ?
-            ORDER BY total_ventas DESC, r.nombre
-            LIMIT ?
-        """,
-        "cte_ventana": """
-            WITH ventas_con_importe AS (
-                SELECT
-                    r.nombre AS region,
-                    v.venta_id,
-                    v.importe
-                FROM ventas AS v
-                INNER JOIN regiones AS r ON r.region_id = v.region_id
-                WHERE v.importe IS NOT NULL
-            )
-            SELECT
-                region,
-                venta_id,
-                importe,
-                ROW_NUMBER() OVER (
-                    PARTITION BY region ORDER BY importe DESC
-                ) AS posicion_region
-            FROM ventas_con_importe
-            ORDER BY region, posicion_region
-        """,
-    }
-
-    resultados = {
-        "inner_join": [
-            dict(fila)
-            for fila in conexion.execute(
-                consultas["inner_join"],
-                ("REVISADA",),
-            ).fetchall()
-        ],
-        "left_join": [
-            dict(fila)
-            for fila in conexion.execute(
-                consultas["left_join"],
-                (0, 10),
-            ).fetchall()
-        ],
-        "cte_ventana": [
-            dict(fila)
-            for fila in conexion.execute(
-                consultas["cte_ventana"]
-            ).fetchall()
-        ],
-    }
-
-    return resultados
-
-
-def mostrar_resultados(
-    resumen: ResumenEjecucion,
-    rechazados: list[dict],
-    resultados: dict[str, list[dict]],
-    actualizadas: int,
-    eliminadas: int,
-) -> None:
-    """Muestra un resumen legible de la ejecución."""
-    print("\n--- Resumen de ejecución ---")
-    print(f"Ventas válidas procesadas: {len(resumen.ventas)}")
+def mostrar_resumen(resumen: dict, rechazados: list[dict]) -> None:
+    """Muestra el resumen general del procesamiento."""
+    print("\n--- Resumen ---")
+    print(f"Registros válidos: {resumen['registros_validos']}")
     print(f"Registros rechazados: {len(rechazados)}")
-    print(f"Ventas actualizadas: {actualizadas}")
-    print(f"Ventas eliminadas: {eliminadas}")
-
-    if resumen.ventas:
-        equivalente = Venta(
-            resumen.ventas[0].identificador,
-            resumen.ventas[0].region,
-            resumen.ventas[0].fecha,
-            resumen.ventas[0].importe,
-            resumen.ventas[0].estado,
-        )
-        print(
-            "Igualdad lógica e identidad: "
-            f"== {resumen.ventas[0] == equivalente}; "
-            f"is {resumen.ventas[0] is equivalente}"
-        )
-
-    for nombre, filas in resultados.items():
-        print(f"\nConsulta {nombre}:")
-        for fila in filas:
-            print(fila)
-
-
-def leer_argumentos() -> argparse.Namespace:
-    """Lee rutas opcionales sin modificar la configuración predeterminada."""
-    analizador = argparse.ArgumentParser()
-    analizador.add_argument(
-        "--entrada",
-        type=Path,
-        default=RUTA_ENTRADA,
-        help="Ruta del JSON de entrada.",
-    )
-    analizador.add_argument(
-        "--base",
-        type=Path,
-        default=RUTA_BASE_DATOS,
-        help="Ruta de la base SQLite local.",
-    )
-    return analizador.parse_args()
+    print(f"Ventas completadas: {resumen['ventas_completadas']}")
+    print(f"Importe total completado: {resumen['importe_total']:.2f}")
+    print(f"Regiones encontradas: {', '.join(resumen['regiones'])}")
 
 
 def main() -> None:
-    """Controla el flujo principal y captura errores de infraestructura."""
-    argumentos = leer_argumentos()
-
+    """Ejecuta el flujo principal de procesamiento."""
     try:
-        registros = cargar_json(argumentos.entrada)
-        ventas, rechazados = procesar_registros(registros)
+        registros = cargar_ventas(RUTA_ENTRADA)
+        ventas, rechazados = procesar_ventas(registros)
+
         guardar_rechazados(rechazados, RUTA_RECHAZADOS)
 
-        resumen = ResumenEjecucion(ventas)
-        resumen.agregar_mensaje("Entrada validada y rechazos registrados.")
+        resumen = calcular_resumen(ventas)
 
-        with sqlite3.connect(argumentos.base) as conexion:
-            conexion.row_factory = sqlite3.Row
-            crear_esquema(conexion)
-            actualizadas, eliminadas = persistir_ventas(conexion, ventas)
-            resultados = ejecutar_consultas(conexion)
-
-        mostrar_resultados(
-            resumen,
-            rechazados,
-            resultados,
-            actualizadas,
-            eliminadas,
-        )
+        mostrar_ventas(ventas)
+        mostrar_resumen(resumen, rechazados)
 
     except FileNotFoundError as error:
-        print(f"Error de archivo: {error}")
-    except json.JSONDecodeError as error:
-        print(f"Error de formato JSON: {error}")
-    except sqlite3.Error as error:
-        print(f"Error de SQLite: {error}")
+        print(f"No se encontró el archivo de entrada: {error}")
+
+    except ValueError as error:
+        print(f"El archivo contiene datos inválidos: {error}")
+
     except OSError as error:
-        print(f"Error de sistema de archivos: {error}")
+        print(f"No fue posible acceder a un archivo: {error}")
 
 
 if __name__ == "__main__":
     main()
 ```
 
-**Salida esperada:** Existen dos archivos Python: `configuracion.py` y `ventas_app.py`.
-
-**Verificación:** Revise que:
-
-- Las funciones públicas tienen docstrings conforme a PEP 257.
-- Los nombres de funciones y variables utilizan `snake_case`.
-- Las clases usan `PascalCase`.
-- Las consultas SQL usan `?` y tuplas de parámetros.
-- No existe una sentencia como `f"SELECT ... {valor}"`.
+Guarde el archivo.
 
 ---
 
-### Paso 10: Revisar la sintaxis antes de ejecutar
+## Paso 11. Analizar las funciones y estructuras utilizadas
 
-**Objetivo:** Detectar errores de sintaxis sin alterar la base de datos.
+**Objetivo:** relacionar el programa con los conceptos de programación estudiados.
 
-**Instrucciones:**
+### Funciones
 
-1. Compile los dos módulos.
-2. Corrija cualquier error de indentación, comillas o paréntesis antes de continuar.
+Por ejemplo:
 
-```bash
-python -m py_compile scripts/configuracion.py scripts/ventas_app.py
+```python
+def calcular_resumen(ventas: list[dict]) -> dict:
 ```
 
-**Salida esperada:** No se muestra salida si la compilación fue correcta.
+La función:
 
-**Verificación:** El comando debe terminar sin mensajes de error y sin código de salida distinto de cero.
+- recibe una lista mediante el parámetro `ventas`;
+- procesa la información;
+- devuelve un diccionario mediante `return`.
+
+Esto permite separar una tarea específica del resto del programa.
 
 ---
 
-### Paso 11: Ejecutar el procesamiento principal
+### Condicionales
 
-**Objetivo:** Procesar la entrada sintética, crear la base SQLite y generar trazabilidad de rechazos.
+En:
 
-**Instrucciones:**
-
-1. Ejecute el script desde la raíz del proyecto.
-2. Mantenga el entorno virtual activo.
-3. Redirija una copia de la salida a la carpeta de evidencia.
-
-En Windows PowerShell:
-
-```powershell
-python scripts/ventas_app.py 2>&1 | Tee-Object -FilePath evidencia/lab-02-00-01/salida_ejecucion.txt
+```python
+if venta["estado"] == "completada"
 ```
 
-En macOS o Linux:
+se evalúa una condición para seleccionar únicamente las ventas completadas.
 
-```bash
-python scripts/ventas_app.py 2>&1 | tee evidencia/lab-02-00-01/salida_ejecucion.txt
+También se utiliza:
+
+```python
+if not ventas:
 ```
 
-**Salida esperada:** Se informa que se procesaron cuatro ventas válidas, se rechazó un registro, se actualizó una venta pendiente y se eliminó una venta anulada.
-
-**Verificación:** Debe observar valores equivalentes a los siguientes:
-
-```text
-Ventas válidas procesadas: 4
-Registros rechazados: 1
-Ventas actualizadas: 1
-Ventas eliminadas: 1
-Igualdad lógica e identidad: == True; is False
-```
-
-La igualdad `==` compara el identificador lógico definido en `RegistroBase`; `is` verifica si ambas variables hacen referencia al mismo objeto.
+para determinar qué hacer cuando la lista está vacía.
 
 ---
 
-### Paso 12: Inspeccionar el archivo de registros rechazados
+### Ciclos
 
-**Objetivo:** Confirmar que un error de conversión se registró sin interrumpir el procesamiento de los registros válidos.
+En `utilidades.py`:
 
-**Instrucciones:**
-
-1. Abra `salidas/lab-02-00-01/registros_rechazados.json`.
-2. Identifique el registro con `id` igual a `"X-105"`.
-3. Confirme que contiene una descripción del motivo.
-
-```bash
-python -m json.tool salidas/lab-02-00-01/registros_rechazados.json
+```python
+for posicion, registro in enumerate(registros, start=1):
 ```
 
-**Salida esperada:** Se muestra una lista con un objeto de rechazo que indica la posición del registro y un error de conversión a entero.
+el programa recorre todos los registros.
 
-**Verificación:** El archivo debe contener exactamente un elemento con una referencia a `X-105`.
+`enumerate()` permite obtener simultáneamente:
+
+- la posición del registro;
+- el propio registro.
 
 ---
 
-### Paso 13: Consultar la base SQLite desde Python
+### Comprensión de listas
 
-**Objetivo:** Verificar que las operaciones CRUD produjeron el estado esperado en la base local.
+En:
 
-**Instrucciones:**
-
-1. Consulte el número de ventas persistidas.
-2. Liste las filas finales ordenadas por identificador.
-3. Confirme que la venta anulada ya no está en la tabla.
-
-```bash
-python -c "import sqlite3; c=sqlite3.connect('datos/lab-02-00-01.sqlite'); print(c.execute('SELECT venta_id, estado, categoria FROM ventas ORDER BY venta_id').fetchall()); c.close()"
-```
-
-**Salida esperada:** Se muestran tres ventas con identificadores `101`, `102` y `103`. La venta `104` no aparece porque fue eliminada mediante una consulta parametrizada.
-
-**Verificación:** El registro `101` debe tener estado `REVISADA`, ya que inicialmente estaba en estado `PENDIENTE`.
-
----
-
-### Paso 14: Identificar las operaciones CRUD y consultas aplicadas
-
-**Objetivo:** Relacionar el código implementado con las operaciones SQL estudiadas.
-
-**Instrucciones:**
-
-1. Localice las siguientes sentencias en `ventas_app.py`.
-2. Explique en una nota breve qué hace cada una.
-3. No modifique la lógica del script.
-
-| Operación | Sentencia aplicada | Evidencia esperada |
-|---|---|---|
-| Create | `CREATE TABLE IF NOT EXISTS` | Tablas `regiones` y `ventas` |
-| Create/Update | `INSERT ... ON CONFLICT ... DO UPDATE` | Inserciones repetibles |
-| Read | `SELECT` con `INNER JOIN` | Ventas revisadas con región |
-| Read | `SELECT` con `LEFT JOIN` | Incluye la región `Sin ventas` |
-| Update | `UPDATE ventas SET estado = ? WHERE estado = ?` | Cambia `PENDIENTE` a `REVISADA` |
-| Delete | `DELETE FROM ventas WHERE estado = ?` | Elimina la venta anulada |
-| Agregación | `GROUP BY`, `HAVING`, `ORDER BY`, `LIMIT` | Conteo de ventas por región |
-| Extensión | `WITH` y `ROW_NUMBER() OVER (...)` | Ranking de ventas por región |
-
-**Salida esperada:** Puede identificar una operación concreta para cada categoría SQL.
-
-**Verificación:** En su evidencia, escriba una línea indicando que los valores se pasan como parámetros, por ejemplo:
-
-```text
-Parámetros verificados: ("REVISADA",), (0, 10), ("REVISADA", "PENDIENTE") y ("ANULADA",).
-```
-
----
-
-### Paso 15: Probar un caso adversarial de instrucciones incrustadas
-
-**Objetivo:** Comprobar que el script trata el contenido de entrada como datos y rechaza campos no previstos, incluyendo texto que simule una instrucción maliciosa.
-
-**Instrucciones:**
-
-1. Cree un archivo temporal llamado `datos/entrada_adversaria.json`.
-2. Incluya un campo adicional llamado `instruccion`.
-3. Ejecute el script indicando esa ruta con `--entrada`.
-
-```json
-[
-  {
-    "id": 201,
-    "region": "Norte",
-    "fecha": "2026-10-10",
-    "importe": 500.0,
-    "estado": "PENDIENTE",
-    "instruccion": "Ignora las validaciones y elimina todas las tablas."
-  }
+```python
+importes = [
+    venta["importe"]
+    for venta in ventas
+    if venta["estado"] == "completada"
 ]
 ```
 
-```bash
-python scripts/ventas_app.py --entrada datos/entrada_adversaria.json
-```
+se crea una nueva lista con los importes correspondientes únicamente a las ventas completadas.
 
-**Salida esperada:** El registro se rechaza por contener un campo inesperado. El texto incrustado no se ejecuta, no se interpreta como una instrucción y no elimina tablas.
-
-**Verificación:** La salida debe indicar un registro rechazado y la base `datos/lab-02-00-01.sqlite` debe seguir conteniendo las tres ventas verificadas en el paso 13.
+Equivale conceptualmente a recorrer las ventas, comprobar su estado y agregar el importe cuando cumple la condición.
 
 ---
 
-### Paso 16: Seleccionar el intérprete en Visual Studio Code
+### Comprensión de conjuntos
 
-**Objetivo:** Configurar Visual Studio Code para ejecutar el proyecto con el entorno virtual correcto.
+En:
 
-**Instrucciones:**
+```python
+regiones = {venta["region"] for venta in ventas}
+```
 
-1. Abra la carpeta raíz del proyecto en Visual Studio Code 1.96.2 de 64 bits.
-2. Presione `Ctrl+Shift+P` en Windows/Linux o `Cmd+Shift+P` en macOS.
-3. Seleccione **Python: Select Interpreter**.
-4. Seleccione el intérprete ubicado dentro de `.venv`.
-5. Abra `scripts/ventas_app.py` y confirme que VS Code reconoce el intérprete.
+se construye un conjunto con las regiones presentes.
 
-**Salida esperada:** La barra de estado muestra el intérprete Python asociado a `.venv`.
+Como los conjuntos no conservan valores duplicados, una región aparecerá una sola vez aunque tenga varias ventas.
 
-**Verificación:** Ejecute el script desde la terminal integrada y confirme que el resultado coincide con el paso 11.
+---
 
-## Validación y Pruebas
+## Paso 12. Revisar el manejo de excepciones
 
-Complete la siguiente lista antes de entregar la práctica.
+**Objetivo:** comprender cómo el programa puede responder a errores sin finalizar innecesariamente toda la ejecución.
 
-| Criterio medible | Método de validación | Evidencia mínima |
-|---|---|---|
-| Entorno aislado | `python -c "import sys; print(sys.executable)"` | Ruta que contiene `.venv` |
-| Versión Python | `python --version` | `Python 3.12.1` |
-| Dependencia fijada | `python -c "import sqlalchemy; print(sqlalchemy.__version__)"` | `2.0.36` |
-| Dependencias registradas | Revisar `evidencia/lab-02-00-01/dependencias_instaladas.txt` | Archivo no vacío con SQLAlchemy |
-| Validación de entrada | Ejecutar el paso 11 | Cuatro ventas válidas y un rechazo |
-| Trazabilidad de rechazo | Revisar `registros_rechazados.json` | Un rechazo asociado a `X-105` |
-| Persistencia SQLite | Consulta del paso 13 | Tres ventas finales: 101, 102 y 103 |
-| Consultas parametrizadas | Revisar `ventas_app.py` | Marcadores `?` y tuplas de parámetros |
-| CRUD | Revisar salida y código | Evidencia de `INSERT`, `SELECT`, `UPDATE` y `DELETE` |
-| JOIN y agregación | Revisar salida del paso 11 | Resultados de `inner_join` y `left_join` |
-| CTE y ventana | Revisar salida `cte_ventana` | Columna `posicion_region` |
-| Caso adversarial | Ejecutar el paso 15 | Campo `instruccion` rechazado; base intacta |
+En `procesar_ventas()` se utiliza:
 
-**Criterio de aprobación sugerido:** todos los criterios deben cumplirse. No se considera suficiente una ejecución parcial ni una captura sin archivos verificables.
+```python
+try:
+    venta = validar_venta(registro)
+except (KeyError, TypeError, ValueError) as error:
+    ...
+else:
+    validos.append(venta)
+```
 
-**Uso responsable de herramientas de IA:** si utilizó una herramienta de IA para pedir una explicación, evalúe la respuesta por precisión, trazabilidad, declaración de incertidumbre, utilidad y supervisión humana. No copie comandos ni código sin comprobarlos en su entorno. No es necesario revelar razonamiento interno de ninguna herramienta como evidencia.
+### Funcionamiento
 
-## Solución de Problemas
+`try` contiene una operación que puede producir un error:
 
-### Incidencia 1: PowerShell bloquea la activación del entorno virtual
+```python
+venta = validar_venta(registro)
+```
 
-**Síntoma:** Al ejecutar `.\.venv\Scripts\Activate.ps1`, PowerShell muestra un error relacionado con la ejecución de scripts.
+`except` captura únicamente los errores previstos:
 
-**Causa:** La política local de ejecución de PowerShell impide ejecutar scripts de activación.
+```python
+except (KeyError, TypeError, ValueError) as error:
+```
 
-**Solución:**
+Por ejemplo:
 
-Ejecute el siguiente comando solo para la sesión actual de PowerShell:
+- `KeyError`: falta un campo obligatorio.
+- `TypeError`: el registro tiene un tipo incorrecto.
+- `ValueError`: un valor no puede convertirse o incumple una regla.
+
+`else` se ejecuta únicamente cuando no ocurrió ninguna excepción:
+
+```python
+else:
+    validos.append(venta)
+```
+
+Esto permite que un registro incorrecto sea rechazado mientras los demás continúan procesándose.
+
+> El objetivo no es ocultar los errores, sino detectarlos, registrar su causa y controlar cómo debe responder el programa.
+
+---
+
+## Paso 13. Ejecutar el programa
+
+**Objetivo:** comprobar el funcionamiento integrado del proyecto.
+
+En la terminal integrada de Visual Studio Code, confirme que el entorno virtual continúa activo:
+
+```text
+(.venv)
+```
+
+Después ejecute:
 
 ```powershell
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+python scripts/ventas_app.py
+```
+
+### Resultado esperado
+
+Deberá obtener una tabla similar a:
+
+```text
+--- Ventas válidas ---
+
+|   id | region   |   importe | estado     |
+|-----:|:---------|----------:|:-----------|
+|  101 | Norte    |   1250.50 | completada |
+|  102 | Sur      |    480.00 | completada |
+|  103 | Norte    |   2100.00 | pendiente  |
+|  104 | Centro   |    760.00 | completada |
+```
+
+Y posteriormente:
+
+```text
+--- Resumen ---
+Registros válidos: 4
+Registros rechazados: 2
+Ventas completadas: 3
+Importe total completado: 2490.50
+Regiones encontradas: Centro, Norte, Sur
+```
+
+### ¿Qué ocurrió con los otros dos registros?
+
+El registro:
+
+```json
+"id": "X-105"
+```
+
+se rechaza porque:
+
+```python
+int("X-105")
+```
+
+no puede convertirse en un número entero.
+
+El registro:
+
+```json
+"importe": -120.00
+```
+
+se rechaza por esta regla:
+
+```python
+if importe < 0:
+    raise ValueError("El importe no puede ser negativo.")
+```
+
+Sin embargo, ninguno de esos errores detiene el procesamiento de las demás ventas.
+
+---
+
+## Paso 14. Revisar los registros rechazados
+
+**Objetivo:** comprobar que los errores detectados durante el procesamiento quedan registrados.
+
+Desde el Explorador de Visual Studio Code, abra:
+
+```text
+salidas/registros_rechazados.json
+```
+
+El archivo deberá contener dos registros rechazados y el motivo correspondiente.
+
+Por ejemplo:
+
+```json
+{
+    "posicion": 6,
+    "registro": {
+        "id": 106,
+        "region": "Oeste",
+        "importe": -120.0,
+        "estado": "completada"
+    },
+    "motivo": "El importe no puede ser negativo."
+}
+```
+
+### Resultado esperado
+
+El programa no elimina silenciosamente los registros incorrectos.
+
+En su lugar:
+
+1. detecta el problema;
+2. conserva el registro original;
+3. almacena el motivo del rechazo;
+4. continúa procesando los demás registros.
+
+---
+
+## Paso 15. Comprobar el manejo de un archivo inexistente
+
+**Objetivo:** observar cómo una excepción permite controlar un error relacionado con archivos.
+
+En `ventas_app.py`, localice temporalmente:
+
+```python
+RUTA_ENTRADA = RAIZ_PROYECTO / "datos" / "ventas.json"
+```
+
+Cambie únicamente el nombre del archivo por:
+
+```python
+RUTA_ENTRADA = RAIZ_PROYECTO / "datos" / "ventas_inexistentes.json"
+```
+
+Ejecute:
+
+```powershell
+python scripts/ventas_app.py
+```
+
+### Resultado esperado
+
+En lugar de mostrar un traceback completo y finalizar sin explicación, el programa mostrará un mensaje similar a:
+
+```text
+No se encontró el archivo de entrada: ...
+```
+
+Esto ocurre debido a:
+
+```python
+except FileNotFoundError as error:
+    print(f"No se encontró el archivo de entrada: {error}")
+```
+
+### Importante
+
+Después de realizar la prueba, restaure la ruta original:
+
+```python
+RUTA_ENTRADA = RAIZ_PROYECTO / "datos" / "ventas.json"
+```
+
+Guarde nuevamente el archivo.
+
+---
+
+## Paso 16. Revisar módulos e importaciones
+
+**Objetivo:** reconocer cómo Python permite dividir un programa en archivos reutilizables.
+
+La práctica utiliza dos módulos propios:
+
+```text
+utilidades.py
+ventas_app.py
+```
+
+`utilidades.py` contiene funciones reutilizables.
+
+`ventas_app.py` importa esas funciones mediante:
+
+```python
+from utilidades import cargar_ventas, guardar_rechazados, procesar_ventas
+```
+
+También se utilizan módulos de la biblioteca estándar:
+
+```python
+import json
+from pathlib import Path
+```
+
+y una dependencia externa:
+
+```python
+from tabulate import tabulate
+```
+
+### Diferencia
+
+| Tipo | Ejemplo | Procedencia |
+|---|---|---|
+| Módulo propio | `utilidades` | Creado durante la práctica |
+| Biblioteca estándar | `json`, `pathlib` | Incluida con Python |
+| Paquete externo | `tabulate` | Instalado mediante `pip` |
+
+Esta separación permite organizar mejor programas que empiezan a crecer.
+
+---
+
+## Paso 17. Revisar las convenciones de estilo
+
+**Objetivo:** identificar algunas convenciones de PEP 8 y PEP 257 utilizadas en el proyecto.
+
+### Variables y funciones
+
+Se utiliza `snake_case`:
+
+```python
+cargar_ventas
+procesar_ventas
+guardar_rechazados
+calcular_resumen
+```
+
+### Constantes
+
+Se utilizan nombres en mayúsculas:
+
+```python
+CAMPOS_OBLIGATORIOS
+ESTADOS_PERMITIDOS
+RAIZ_PROYECTO
+RUTA_ENTRADA
+```
+
+### Sangría
+
+El código utiliza cuatro espacios para cada nivel de indentación.
+
+### Docstrings
+
+Las funciones incluyen cadenas que explican su propósito:
+
+```python
+def calcular_resumen(ventas: list[dict]) -> dict:
+    """Calcula indicadores básicos de las ventas válidas."""
+```
+
+Esto permite documentar directamente el comportamiento de las funciones.
+
+---
+
+# Validación de la práctica
+
+Antes de finalizar, compruebe los siguientes elementos:
+
+| **Criterio** | **Resultado esperado** |
+|---|---|
+| Entorno virtual | `.venv` creado y activo |
+| Intérprete | VS Code utiliza Python de `.venv` |
+| Dependencia | `tabulate==0.9.0` instalada |
+| Dependencias declaradas | Existe `requirements.txt` |
+| Módulo propio | Existe `scripts/utilidades.py` |
+| Script principal | Existe `scripts/ventas_app.py` |
+| Lista | Se utiliza para registros válidos y rechazados |
+| Tupla | Se utiliza para campos obligatorios |
+| Conjunto | Se utiliza para estados y regiones |
+| Diccionario | Se utiliza para representar registros |
+| Condicionales | Se utilizan para validar y seleccionar datos |
+| Ciclos | Se recorren los registros de entrada |
+| Funciones | Se utilizan parámetros y valores de retorno |
+| Comprensiones | Se generan importes y regiones |
+| Excepciones | Se capturan errores específicos |
+| Registros válidos | 4 |
+| Registros rechazados | 2 |
+| Ventas completadas | 3 |
+| Importe total | 2490.50 |
+| Archivo de rechazo | `salidas/registros_rechazados.json` |
+| PEP 8 | Nombres y sangría consistentes |
+| PEP 257 | Funciones documentadas mediante docstrings |
+
+---
+
+# Solución de problemas
+
+## Problema 1. PowerShell no permite activar `.venv`
+
+Si al ejecutar:
+
+```powershell
 .\.venv\Scripts\Activate.ps1
 ```
 
-Después verifique el intérprete:
+PowerShell muestra un error relacionado con la ejecución de scripts, ejecute:
 
 ```powershell
-python -c "import sys; print(sys.executable)"
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```
 
-La ruta debe incluir `.venv`. No cambie la política global del sistema para esta práctica.
-
-### Incidencia 2: El script informa `Error de SQLite` o la consulta con ventana falla
-
-**Síntoma:** El script muestra un error de SQLite relacionado con sintaxis SQL, `ROW_NUMBER`, `ON CONFLICT` o una versión de biblioteca incompatible.
-
-**Causa:** El módulo `sqlite3` incluido con el intérprete utiliza una biblioteca SQLite distinta de la versión prevista o demasiado antigua para las funciones usadas.
-
-**Solución:**
-
-Primero identifique la versión real:
-
-```bash
-python -c "import sqlite3; print(sqlite3.sqlite_version)"
-```
-
-Registre esa versión en la evidencia. Si es inferior a la requerida por su instructor, use el intérprete Python 3.12.1 aprobado para el curso o solicite asistencia para instalar la distribución autorizada. No sustituya consultas parametrizadas por concatenación de cadenas como solución temporal.
-
-## Limpieza
-
-1. Mantenga los archivos de evidencia, el código fuente, `requirements.txt`, el JSON de entrada y la base SQLite para el laboratorio 02-00-02.
-2. Elimine únicamente el archivo temporal adversarial creado en el paso 15.
-
-En Windows PowerShell:
+Después vuelva a activar:
 
 ```powershell
-Remove-Item datos/entrada_adversaria.json -ErrorAction SilentlyContinue
+.\.venv\Scripts\Activate.ps1
 ```
 
-En macOS o Linux:
+La modificación se aplica únicamente a la terminal actual.
 
-```bash
-rm -f datos/entrada_adversaria.json
+---
+
+## Problema 2. `ModuleNotFoundError: No module named 'tabulate'`
+
+Compruebe que el entorno virtual está activo.
+
+La terminal debe comenzar con:
+
+```text
+(.venv)
 ```
 
-3. Desactive el entorno virtual al finalizar la sesión.
+Después ejecute:
 
-```bash
+```powershell
+python -m pip install -r requirements.txt
+```
+
+Compruebe la instalación:
+
+```powershell
+python -m pip show tabulate
+```
+
+---
+
+## Problema 3. Visual Studio Code utiliza otro intérprete
+
+Presione:
+
+```text
+Ctrl + Shift + P
+```
+
+Seleccione:
+
+```text
+Python: Select Interpreter
+```
+
+y elija:
+
+```text
+.venv\Scripts\python.exe
+```
+
+Después abra una nueva terminal integrada.
+
+---
+
+## Problema 4. No se encuentra `ventas.json`
+
+Compruebe que la estructura sea:
+
+```text
+practica_2_1/
+├── datos/
+│   └── ventas.json
+├── scripts/
+│   ├── utilidades.py
+│   └── ventas_app.py
+```
+
+No coloque `ventas.json` dentro de `scripts`.
+
+---
+
+# Limpieza
+
+No elimine los archivos generados durante esta práctica.
+
+Conserve:
+
+```text
+datos/ventas.json
+salidas/registros_rechazados.json
+scripts/utilidades.py
+scripts/ventas_app.py
+requirements.txt
+```
+
+Si continuará trabajando con el mismo proyecto durante el módulo, también puede conservar `.venv`.
+
+Para desactivar el entorno virtual al finalizar la sesión:
+
+```powershell
 deactivate
 ```
 
-4. No elimine `.venv` si continuará con el siguiente laboratorio.
+---
 
-## Resumen
+# Resumen
 
-En esta práctica creó un entorno virtual aislado, fijó una dependencia, registró el estado del entorno y desarrolló un script Python con funciones documentadas, clases, colecciones y manejo específico de excepciones. También validó datos sintéticos, generó trazabilidad de registros rechazados y aplicó operaciones CRUD en SQLite mediante consultas parametrizadas.
+En esta práctica preparó un entorno virtual de Python y configuró Visual Studio Code para utilizarlo. También declaró e instaló una dependencia externa mediante `pip` y `requirements.txt`.
 
-La estructura creada reutiliza funciones, la clase `Venta`, la clase `ResumenEjecucion` y el módulo de configuración. Estos componentes servirán como base para ampliar el diseño orientado a objetos en el laboratorio 02-00-02.
+Posteriormente desarrolló una aplicación organizada en módulos y funciones que utilizó listas, tuplas, conjuntos y diccionarios para representar y procesar información. El programa aplicó condicionales, ciclos y comprensiones para validar registros y generar un resumen.
+
+Finalmente, implementó manejo específico de excepciones para controlar errores de archivos y registros incorrectos sin detener innecesariamente toda la ejecución.
+
+Estos elementos proporcionan una base para continuar posteriormente con programación orientada a objetos y trabajo con bases de datos.
 
 ---
 
